@@ -1,184 +1,125 @@
-class Node {
-  constructor(val) {
-    this.value = val;
-    this.next = null;
-  }
+class Node{
+constructor(val){
+          this.val =  val;
+          this.next = null;
+    }
 }
 
-class SLL {
-  constructor() {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
-  }
+class SinglyLinkedList{
+constructor(){
+        this.head = null;
+        this.tail = null;
+        this.length = 0;
+    }
+     push(val){
+       var newNode = new Node(val);
+       if( !this.head){
+           this.head = newNode;
+           this.tail = this.head;
+       } 
+       else {
+           this.tail.next = newNode;
+           this.tail = newNode;
+       }
+       this.length++;
+       return this;
+     }
 
-  push(val) {
-    const newNode = new Node(val);
-
-    if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
-    } else {
-      this.tail.next = newNode;
-      this.tail = newNode;
+    pop(){
+     if(!this.head) return undefined;
+     var current = this.head;
+     var newTail = current;
+      while(current.next){
+        newTail = current;
+        current = current.next;
+      }
+      this.tail = newTail;
+      this.tail.next = null;
+      this.length--;
+      if(this.length === 0){
+        this.head = null;
+        this.tail = null;
+      }
+      return current;
     }
 
-    this.length += 1;
-  }
-
-  pop() {
-    if (!this.head || !this.tail) return;
-
-    let curr = this.head;
-    let newTail = curr;
-
-    if (this.length === 1) {
-      this.head = null;
-      this.tail = null;
-      this.length = 0;
-
-      return curr;
+    shift(){
+      if(!this.head) return undefined;
+      var currentHead = this.head;
+        this.head = currentHead.next;
+        this.length--;
+         if(this.length === 0){
+        this.head = null;
+        this.tail = null;
+      }
+        return currentHead;
     }
 
-    while(curr.next) {
-      newTail = curr;
-      curr = curr.next;
+    unshift(val){
+      var newlyNode = new Node(val);
+      if(!this.head){
+        this.head = newlyNode;
+        this.tail = newlyNode;
+      }
+        else{
+      newlyNode.next = this.head;
+      this.head = newlyNode;
+        }
+          this.length++;
+          return list;
+      }
+
+      get(index){
+        if(index < 0 || index >= this.length)   return null;
+        var counter = 0;
+        var current = this.head;
+        while(counter != index){
+          current = current.next;
+          counter++;
+        }
+        return current;
     }
 
-    newTail.next = null;
-    this.tail = newTail;
-    this.length--;
-
-    return curr;
-  }
-
-  shift() {
-    if (!this.length) return;
-    if (this.length === 1) this.tail = null;
-
-    let oldHead = this.head;
-    this.head = oldHead.next;
-    this.length--;
-
-    return oldHead;
-  }
-
-  unshift(val) {
-    const newNode = new Node(val);
-    
-    if (!this.head) {
-      this.head = newNode;
-      this.tail = this.head;
-    } else {
-      newNode.next = this.head;
-      this.head = newNode;
-    }
-    
-    this.length++;
-  }
-
-  get(idx) {
-    if (idx < 0 || idx >= this.length) return null;
-
-    let currNode = this.head;
-    let counter = 0;
-
-    while (counter < idx) {
-      currNode = currNode.next;
-      counter++;
+    set(index,val){
+      var  specific = this.get(index);
+      if(!specific) return false;
+      else{
+        this.val = val;
+        return true;
+      }
     }
 
-    return currNode;
-  }
-
-  set(idx, val) {
-    const foundNode = this.get(idx);
-    if (!foundNode) return false;
-
-    foundNode.value = val;
-
-    return true;
-  }
-
-  insert(idx, val) {
-    if (idx < 0 || idx > this.length) return false;
-
-    if (idx === 0) {
-      this.unshift(val);
-      return true;
+    insert(index, value){
+         if(index < 0 || index > this.length)   return false;
+         if(index === this.length) this.push(value);
+         if(index === 0) this.unshift(value);
+         var newNode = new Node(value);
+         var prev = this.get(index -1);
+         var temp = prev.next;
+         prev.next = newNode;
+         newNode.next = temp;
+         this.length++;
+         return true;
     }
 
-    if (idx === this.length) {
-      this.push(val);
-      return true;
+    remove(index){
+         if(index < 0 || index > this.length)   return undefined;
+         if(index === this.length -1) this.pop();
+          if(index === 0) this.shift(index);
+          var prev = this.get(index -1);
+          var removed = prev.next;
+          prev.next = removed.next;
+          this.length--;
+
+          return removed;
+    }
+       
     }
 
-    let newNode = new Node(val);
-    let prev = this.get(idx - 1);
-    let curr = prev.next;
 
-    prev.next = newNode;
-    newNode.next = curr;
-
-    this.length++;
-
-    return true;
-  }
-
-  remove(idx) {
-    if (idx < 0 || idx >= this.length) return;
-    if (idx === this.length - 1) this.pop();
-    if (idx === 0) this.shift();
-
-    const prev = this.get(idx - 1);
-    const nodeToRemove = prev.next;
-
-    prev.next = nodeToRemove.next;
-    this.length--;
-
-    return nodeToRemove;
-  }
-
-  traverse() {
-    let curr = this.head;
-
-    while (curr) {
-      console.log(curr.value);
-      curr = curr.next;
-    }
-  }
-
-  reverse() {
-    if (this.length <= 1) return;
-
-    let prev = this.head;
-    let curr = prev.next;
-    let next = curr.next;
-
-    while (next !== this.tail) {
-      curr.next = prev;
-
-      prev = curr;
-      curr = next;
-      next = next.next;
-    }
-
-    curr.next = prev;
-    next.next = curr;
-
-    const oldHead = this.head;
-    this.head = this.tail;
-    this.tail = oldHead;
-    this.tail.next = null;
-  }
-}
-
-const list = new SLL();
-list.push(1);
-list.push(2);
-list.push(3);
-list.push(4);
-list.push(5);
-list.push(6);
-list.reverse();
-list.traverse();
+var list = new SinglyLinkedList();
+list.push("first");
+list.push("second");
+list.push("third");
+list.push("fourth");
+list.push("fifth");
